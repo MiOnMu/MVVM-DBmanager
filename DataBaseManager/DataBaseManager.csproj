@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="MvvmDialogs" Version="9.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataBaseManager.AppService.Contracts\DataBaseManager.AppService.Contracts.csproj" />
+    <ProjectReference Include="..\DataBaseManager.AppService\DataBaseManager.AppService.csproj" />
+    <ProjectReference Include="..\DataBaseManager.CrossCutting\DataBaseManager.CrossCutting.csproj" />
+    <ProjectReference Include="..\DataBaseManager.DataAccess.Contracts\DataBaseManager.DataAccess.Contracts.csproj" />
+    <ProjectReference Include="..\DataBaseManager.DataAccess\DataBaseManager.DataAccess.csproj" />
+    <ProjectReference Include="..\DataBaseManagerUi\DataBaseManagerUi.csproj" />
+  </ItemGroup>
+
+</Project>

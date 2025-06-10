@@ -3,10 +3,12 @@ using MvvmDialogs;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using DataBaseManager;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace protoSingleDlg
+namespace DataBaseManager
 {
+
     public partial class App : Application
     {
         /// <summary>
@@ -20,4 +22,5 @@ namespace protoSingleDlg
             bootstrapper.Run();
         }
     }
+
 }

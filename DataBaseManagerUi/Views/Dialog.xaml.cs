@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PresentationLayerSingleDlg
+namespace DataBaseManagerUi.Views
 {
     /// <summary>
     /// Logika interakcji dla Dialog.xaml

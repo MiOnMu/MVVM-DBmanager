@@ -1,4 +1,4 @@
-﻿namespace protoSingleDlg;
+﻿namespace DataBaseManager;
 
 public interface IBootStrapper
 {

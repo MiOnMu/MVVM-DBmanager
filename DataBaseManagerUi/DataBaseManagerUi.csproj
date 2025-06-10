@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <BaseOutputPath>C:\Temp\Proto\protoSingleDlg\_BuildOutput</BaseOutputPath>
+    <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AppServiceLayerSingleDlg\AppServiceLayerSingleDlg.csproj" />
+    <ProjectReference Include="..\DataBaseManager.AppService.Contracts\DataBaseManager.AppService.Contracts.csproj" />
+    <ProjectReference Include="..\DataBaseManager.AppService\DataBaseManager.AppService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MvvmDialogs">
+      <HintPath>..\..\..\..\Users\0\.nuget\packages\mvvmdialogs\9.1.2\lib\net6.0-windows7.0\MvvmDialogs.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

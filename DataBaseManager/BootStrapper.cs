@@ -1,25 +1,26 @@
-﻿using AppServiceLayerSingleDlg;
+﻿using DataBaseManager.AppService;
+using DataBaseManager.AppService.Contracts;
+using DataBaseManagerUi.ViewModels;
+using DataBaseManagerUi.Views;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
-using PresentationLayerSingleDlg;
 
-
-namespace protoSingleDlg;
+namespace DataBaseManager;
 
 public class BootStrapper : IBootStrapper
 {
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
-    /// Specjalna klasa, której celem jest powiązanie zależności wewnątrz siebie
+    /// Specjalna klasa, której celem jest zapewnienie powiązania zależności wewnątrz siebie
     /// </summary>
     public BootStrapper()
     {
         var services = new ServiceCollection();
 
-        // Rejestracja usług
+        // Rejestracja serwisów
         services.AddSingleton<IDialogService, DialogService>();
-        services.AddSingleton<IAppService, AppService>();
+        services.AddSingleton<IDbAppService, DbAppService>();
 
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
@@ -30,7 +31,7 @@ public class BootStrapper : IBootStrapper
 
     public void Run()
     {
-        var mainWindow = new MainWindow   // Tworzenie głównego okna i ustawienie DataContext
+        var mainWindow = new MainView  // Tworzymy główne okno i ustawiamy DataContext
         { DataContext = _serviceProvider.GetRequiredService<MainViewModel>() };
         mainWindow.Show();
     }
