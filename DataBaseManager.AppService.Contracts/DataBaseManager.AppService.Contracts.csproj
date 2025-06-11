@@ -8,4 +8,9 @@
     <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataBaseManager.CrossCutting\DataBaseManager.CrossCutting.csproj" />
+    <ProjectReference Include="..\DataBaseManager.DataAccess.Contracts\DataBaseManager.DataAccess.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

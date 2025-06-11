@@ -1,5 +1,7 @@
 ﻿using DataBaseManager.AppService;
 using DataBaseManager.AppService.Contracts;
+using DataBaseManager.DataAccess;
+using DataBaseManager.DataAccess.Contracts;
 using DataBaseManagerUi.ViewModels;
 using DataBaseManagerUi.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,10 @@ public class BootStrapper : IBootStrapper
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
         services.AddTransient<DialogViewModel>();
+        services.AddTransient<CustomersViewModel>();
+
+        // Rejestracja repozytoriów
+        services.AddSingleton<ICustomerRepository, CustomerRepository>();
 
         _serviceProvider = services.BuildServiceProvider();
     }

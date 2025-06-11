@@ -10,5 +10,6 @@
         Title="MainView" Height="450" Width="800">
     <Grid>
         <Button Content="Open Dialog" Command="{Binding ShowDialogCommand}" HorizontalAlignment="Center" Margin="0,146,0,0" VerticalAlignment="Top" Height="89" Width="212"/>
+        <Button Content="Customers" Command="{Binding ShowCustomersCommand}" HorizontalAlignment="Left" Margin="52,48,0,0" VerticalAlignment="Top" Height="72" Width="79"/>
     </Grid>
 </Window>

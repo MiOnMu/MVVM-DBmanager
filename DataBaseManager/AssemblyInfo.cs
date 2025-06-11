@@ -1,10 +1,10 @@
 using System.Windows;
 
-[assembly: ThemeInfo(
-    ResourceDictionaryLocation.None,              //gdzie znajduj¹ siê s³owniki zasobów specyficzne dla motywu
-                                                  //(u¿ywane, jeœli zasób nie zostanie znaleziony na stronie,
-                                                  // lub w s³ownikach zasobów aplikacji)
-    ResourceDictionaryLocation.SourceAssembly     //gdzie znajduje siê ogólny s³ownik zasobów
-                                                  //(u¿ywane, jeœli zasób nie zostanie znaleziony na stronie,
-                                                  // w aplikacji lub w jakichkolwiek s³ownikach zasobów specyficznych dla motywu)
+[assembly:ThemeInfo(
+    ResourceDictionaryLocation.None,            //where theme specific resource dictionaries are located
+                                                //(used if a resource is not found in the page,
+                                                // or application resource dictionaries)
+    ResourceDictionaryLocation.SourceAssembly   //where the generic resource dictionary is located
+                                                //(used if a resource is not found in the page,
+                                                // app, or any theme specific resource dictionaries)
 )]

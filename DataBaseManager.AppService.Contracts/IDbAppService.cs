@@ -1,9 +1,16 @@
-﻿namespace DataBaseManager.AppService.Contracts;
+﻿using DataBaseManager.CrossCutting.CommonDTOs;
+using DataBaseManager.DataAccess.Contracts.DTOs;
+
+namespace DataBaseManager.AppService.Contracts;
 
 /// <summary>
-/// Na razie pusty kontrakt dla serwisu aplikacji
+/// Już nie pusty kontrakt dla serwisu aplikacji
 /// </summary>
 public interface IDbAppService
 {
-
+    /// <summary>
+    /// Pobieranie pełnej kolekcji klientów
+    /// </summary>
+    /// <returns></returns>
+    IEnumerable<ItemCustomerGridDTO> GetCustomersCollection();
 }

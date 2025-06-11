@@ -8,4 +8,12 @@
     <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataBaseManager.Core\DataBaseManager.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
 </Project>
