@@ -10,12 +10,13 @@ public class CustomerRepository : ICustomerRepository
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Customers> GetBookList()
+
+    public IEnumerable<Customers> GetItemsList()
     {
         throw new NotImplementedException();
     }
 
-    public Customers GetBook(int id)
+    public Customers GetItemById(int id)
     {
         throw new NotImplementedException();
     }

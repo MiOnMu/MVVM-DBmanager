@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageReference Include="MvvmDialogs" Version="9.1.2" />
   </ItemGroup>
@@ -22,7 +23,7 @@
 
   <ItemGroup>
     <Reference Include="MvvmDialogs">
-      <HintPath>..\..\..\..\Users\0\.nuget\packages\mvvmdialogs\9.1.2\lib\net6.0-windows7.0\MvvmDialogs.dll</HintPath>
+		<HintPath>..\..\..\Users\Hp\.nuget\packages\mvvmdialogs\9.1.2\lib\net6.0-windows7.0\MvvmDialogs.dll</HintPath>
     </Reference>
   </ItemGroup>
 

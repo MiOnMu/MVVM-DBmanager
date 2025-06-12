@@ -21,12 +21,12 @@ public class BootStrapper : IBootStrapper
         var services = new ServiceCollection();
 
         // Rejestracja serwisów
-        services.AddSingleton<IDialogService, DialogService>();
-        services.AddSingleton<IDbAppService, DbAppService>();
+        services.AddSingleton<IDialogService,   DialogService>();
+        services.AddTransient<IDbAppService,    DbAppService>();
+        services.AddTransient<ICustomerService, DbAppService>();
 
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
-        services.AddTransient<DialogViewModel>();
         services.AddTransient<CustomersViewModel>();
 
         // Rejestracja repozytoriów

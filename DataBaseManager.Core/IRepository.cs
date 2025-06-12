@@ -1,4 +1,7 @@
-﻿namespace DataBaseManager.Core;
+﻿using System;
+using System.Collections.Generic;
+
+namespace DataBaseManager.Core;
 
 /// <summary>
 /// To jest generyczny interfejs, przeznaczony do pracy z modelami dowolnego typu

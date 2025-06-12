@@ -8,4 +8,8 @@
     <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
+
 </Project>

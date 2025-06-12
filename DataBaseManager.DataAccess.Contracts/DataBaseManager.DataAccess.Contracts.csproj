@@ -12,8 +12,4 @@
     <ProjectReference Include="..\DataBaseManager.Core\DataBaseManager.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-  </ItemGroup>
-
 </Project>
