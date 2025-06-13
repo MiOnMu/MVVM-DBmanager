@@ -3,8 +3,10 @@ using MvvmDialogs;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using DataBaseManager;
 using Microsoft.Extensions.DependencyInjection;
+using MvvmDialogs;
 
 namespace DataBaseManager
 {

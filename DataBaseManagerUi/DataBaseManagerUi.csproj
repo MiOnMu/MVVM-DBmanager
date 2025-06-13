@@ -21,10 +21,4 @@
     <ProjectReference Include="..\DataBaseManager.AppService\DataBaseManager.AppService.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="MvvmDialogs">
-		<HintPath>..\..\..\Users\Hp\.nuget\packages\mvvmdialogs\9.1.2\lib\net6.0-windows7.0\MvvmDialogs.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

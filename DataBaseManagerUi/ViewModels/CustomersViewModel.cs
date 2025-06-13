@@ -26,16 +26,16 @@ public class CustomersViewModel : ObservableObject
 
     #region Properties
 
-    #region Customers Collection
+    #region Customer Collection
     private ItemCustomerGridDTO _selectedCustomer;
-    public ItemCustomerGridDTO SelectedCustomer // Ta właściwość zmienia się po kliknięciu myszą na pozycji w tabeli
+    public ItemCustomerGridDTO SelectedCustomer   // Ta właściwość zmienia się po kliknięciu myszą na pozycji w tabeli
     {
         get => _selectedCustomer;
         set
         {
             if (SetProperty(ref _selectedCustomer, value))
             {
-
+                Name = _selectedCustomer?.Name;
                 ContactName = _selectedCustomer?.ContactName;
                 Address = _selectedCustomer?.Address;
                 City = _selectedCustomer?.City;
@@ -62,6 +62,15 @@ public class CustomersViewModel : ObservableObject
     {
         get => _contactName;
         set => SetProperty(ref _contactName, value);
+    }
+    #endregion
+
+    #region  Name
+    private string _name;
+    public string Name
+    {
+        get => _name;
+        set => SetProperty(ref _name, value);
     }
     #endregion
 
@@ -146,9 +155,9 @@ public class CustomersViewModel : ObservableObject
 
 
         // Inicjalizacja poleceń
-        EditCommand = new RelayCommand(OnEditCustomerAsync);
-        DeleteCommand = new RelayCommand<ItemCustomerGridDTO>(OnDeleteCustomerAsync); // Polecenie do usuwania klienta, przyjmuje ItemCustomerGridDTO jako parametr
-        AddCustomerCommand = new RelayCommand(OnConfirmationAddAsync); // Polecenie do dodawania nowego klienta, nie przyjmuje parametrów
+        EditCommand = new RelayCommand(OnEditCustomerAsync);                   // Polecenie do edycji klienta, przyjmuje ItemCustomerGridDTO jako parametr
+        DeleteCommand = new RelayCommand<ItemCustomerGridDTO>(OnDeleteCustomerAsync); // Polecenie do usunięcia klienta, przyjmuje ItemCustomerGridDTO jako parametr
+        AddCustomerCommand = new RelayCommand(OnConfirmationAddAsync);               // Polecenie do dodawania nowego klienta, nie przyjmuje parametrów
     }
     #endregion
 
@@ -162,14 +171,17 @@ public class CustomersViewModel : ObservableObject
     {
 
         ItemCustomerGridDTO oNewDto = new ItemCustomerGridDTO();
-        this.Adapt(oNewDto); // Mapowanie danych
-        if (IsValidNewDtoOf(oNewDto)) // Walidacja danych wejściowych
+        this.Adapt(oNewDto);           // Mapowanie danych
+        if (IsValidNewDtoOf(oNewDto))  // Walidacja danych wejściowych
         {
-            _appService.AddCustomer(oNewDto); // Ta gałąź zostanie wykonana, jeśli walidacja przejdzie pomyślnie
+            bool resulAddCustomerAction = _appService.AddCustomer(oNewDto);   // Ta gałąź zostanie wykonana, jeśli walidacja zakończy się pomyślnie
+            if (!resulAddCustomerAction)
+                _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli wystąpił błąd podczas dodawania
+                    $"$Błąd podczas próby dodania {oNewDto.Name}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
         }
         else
         {
-            _dialogService.ShowMessageBox(this, // A ta gałąź - jeśli dane będą nieprawidłowe
+            _dialogService.ShowMessageBox(this,                       // A ta gałąź - jeśli dane będą nieprawidłowe
                 "Nieprawidłowe dane wejściowe", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
@@ -183,22 +195,22 @@ public class CustomersViewModel : ObservableObject
         if (SelectedCustomer != null)
         {
             ItemCustomerGridDTO editDto = new ItemCustomerGridDTO();
-            this.Adapt(editDto); // Mapowanie danych
+            this.Adapt(editDto);               // Mapowanie danych
             editDto.Id = SelectedCustomer.Id; // Koniecznie ustawiamy identyfikator !!
 
-            if (IsValidNewDtoOf(editDto)) // Walidacja danych wejściowych
+            if (IsValidNewDtoOf(editDto))                                 // Walidacja danych wejściowych
             {
-                _appService.UpdateExistedCustomer(editDto); // Ta gałąź zostanie wykonana, jeśli walidacja przejdzie pomyślnie
+                _appService.UpdateExistedCustomer(editDto);               // Ta gałąź zostanie wykonana, jeśli walidacja zakończy się pomyślnie
             }
             else
             {
-                _dialogService.ShowMessageBox(this, // A ta gałąź - jeśli dane będą nieprawidłowe
+                _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli dane będą nieprawidłowe
                     "Nieprawidłowe dane wejściowe", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         else
         {
-            _dialogService.ShowMessageBox(this, // Wyświetli się, jeśli użytkownik nie wybrał niczego z tabeli
+            _dialogService.ShowMessageBox(this,                   // Wyświetli się, jeśli użytkownik niczego nie wybrał z tabeli
                 "Najpierw należy wybrać wiersz do edycji!", "Ostrzeżenie", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
@@ -219,7 +231,7 @@ public class CustomersViewModel : ObservableObject
 
     private bool IsValidNewDtoOf(ItemCustomerGridDTO oDto)
     {
-        return true; // TODO : Uzupełnić później prawdziwą logiką walidacji danych, na razie zostaje tak
+        return true; // TODO : Uzupełnić później rzeczywistą logiką walidacji danych, na razie zostaje tak
     }
     #endregion
 

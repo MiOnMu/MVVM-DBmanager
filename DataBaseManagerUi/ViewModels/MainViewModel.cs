@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
-using System;
-using System.Threading.Tasks;
 
 namespace DataBaseManagerUi.ViewModels;
 
@@ -37,19 +35,19 @@ public class MainViewModel : ObservableObject
     #region Handlers
     /// <summary>
     /// Nowy handler do wyświetlania okna pomocniczego,
-    /// ale tym razem tylko dla klientów
+    /// ale już tylko dla klientów
     /// </summary>
     /// <returns></returns>
     private async Task OpenCustomersAsync()
     {
 
-        // Pobieranie obiektu CustomersViewModel z kontenera wstrzykiwania zależności
-        // działamy poprzez service provider
+        // Pobranie obiektu CustomersViewModel z kontenera wstrzykiwania zależności
+        // działamy przez dostawcę usług (service provider)
         var customerVM = _serviceProvider.GetRequiredService<CustomersViewModel>();
 
 
         _dialogService.Show(this, customerVM); // Właściwe polecenie wyświetlenia
-        // W tym miejscu do pracy włącza się biblioteka MvvmDialogs
+        // W tym miejscu do pracy wkracza biblioteka MvvmDialogs
 
     }
     #endregion

@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DataBaseManager.AppService.Contracts\DataBaseManager.AppService.Contracts.csproj" />
+    <ProjectReference Include="..\DataBaseManager.DataAccess\DataBaseManager.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
