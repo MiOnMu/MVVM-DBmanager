@@ -20,7 +20,7 @@ namespace DataBaseManager.AppService.Contracts
         /// Dodawanie nowego klienta
         /// </summary>
         /// <param name="inputData"></param>
-        void AddCustomer(ItemCustomerGridDTO inputData);
+        bool AddCustomer(ItemCustomerGridDTO inputData);
 
         /// <summary>
         /// Aktualizacja istniejącego klienta

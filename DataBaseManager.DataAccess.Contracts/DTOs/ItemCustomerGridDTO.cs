@@ -1,8 +1,8 @@
 ﻿namespace DataBaseManager.DataAccess.Contracts.DTOs;
 
 /// <summary>
-/// Dedykowany obiekt DTO (Data Transfer Object) dla encji Customers.
-/// Potrzebny do wyświetlania elementów w tabeli (siatce) klientów.
+/// Prywatny obiekt DTO, powiązany ze specyfiką klienta (Customer).
+/// Potrzebny do wyświetlania elementów w tabeli klientów.
 /// </summary>
 public class ItemCustomerGridDTO
 {
@@ -12,7 +12,12 @@ public class ItemCustomerGridDTO
     public int Id { get; set; }
 
     /// <summary>
-    /// Nazwa kontaktowa klienta, wyświetlana na liście
+    /// Nazwa wyświetlana na liście
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Imię i nazwisko kontaktowe klienta, wyświetlane na liście
     /// </summary>
     public string ContactName { get; set; }
 

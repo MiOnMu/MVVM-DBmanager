@@ -11,23 +11,11 @@ public class CustomerRepository : RepositoryBase, ICustomerRepository
     public CustomerRepository(IDbTransaction transaction) : base(transaction)
     {
     }
-
-    /// <summary>
-    /// Dostęp do repozytorium zdarzeń systemowych
-    /// </summary>
-    public IEventsHistoryRepository EventsRepository
-        => _eventsHistoryRepository ??= new EventsHistoryRepository(_transaction);
-
-    /// <summary>
-    /// Dostęp do repozytorium klientów
-    /// </summary>
-    public ICustomerRepository CustomerRepository
-        => _customerRepository ??= new CustomerRepository(_transaction);
-
+        
     public void Dispose()
     {
-        // W razie potrzeby zaimplementować logikę zwalniania zasobów
-        // Na przykład, możma zamknąć transakcję lub połączenie
+        // W razie potrzeby zaimplementuj logikę zwalniania zasobów
+        // Na przykład, możesz chcieć zamknąć transakcję lub połączenie
         Transaction?.Dispose();
     }
 

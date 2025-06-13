@@ -3,7 +3,7 @@
 namespace DataBaseManager.Core.Models;
 
 [Serializable]
-public class Customers
+public class Customer
 {
     /// <summary>
     /// Identyfikator
