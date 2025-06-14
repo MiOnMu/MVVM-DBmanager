@@ -83,8 +83,10 @@
 				<TextBox Text="{Binding PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" Margin="10,20,10,0" Grid.Column="5"/>
 				<Label Content="Country" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Center" Width="57" VerticalAlignment="Top" Margin="0,47,0,0" Grid.Column="4"/>
 				<TextBox Text="{Binding Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" Margin="10,49,10,0" Grid.Column="5"/>
+				<Label Content="Name" Height="22" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="35,19,0,0" HorizontalAlignment="Left" Width="57"/>
+				<TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Grid.Column="1" Margin="0,20,0,0"/>
 
-
+				
 			</Grid>
 		</Border>
 		<Button Content="Close" Margin="0,0,10,6" Height="24" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="88" Foreground="#FFE7E85F">

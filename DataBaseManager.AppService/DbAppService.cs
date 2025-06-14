@@ -97,7 +97,7 @@ public class DbAppService : IDbAppService
 
                 // Dodajemy wpis do historii zdarzeń
                 unitOfWork.EventsRepository
-                    .AddEventHistory($"Dodanie nowego klienta {inputData.Name}");
+                    .AddEventHistory($"New client adding {inputData.Name}");
 
                 // Zapisujemy zmiany w bazie danych
                 unitOfWork.Commit();

@@ -11,6 +11,11 @@ public class Customer
     public int Id { get; set; }
 
     /// <summary>
+    /// Nazwa klienta, wyświetlana na liście
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
     /// Nazwa kontaktowa klienta, wyświetlana na liście
     /// </summary>
     public string ContactName { get; set; }
