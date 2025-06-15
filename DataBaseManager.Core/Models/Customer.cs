@@ -8,7 +8,7 @@ public class Customer
     /// <summary>
     /// Identyfikator
     /// </summary>
-    public int Id { get; set; }
+    public int CustomerId { get; set; }
 
     /// <summary>
     /// Nazwa klienta, wyświetlana na liście

@@ -1,7 +1,9 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
 using DataBaseManager.Core.Models;
 using DataBaseManager.DataAccess.Contracts;
+using System.Data;
+using System.Xml.Linq;
+using static Dapper.SqlMapper;
 
 namespace DataBaseManager.DataAccess;
 
@@ -22,7 +24,10 @@ public class CustomerRepository : RepositoryBase, ICustomerRepository
 
     public IEnumerable<Customer> GetItemsList()
     {
-        throw new NotImplementedException();
+        return Connection.Query<Customer>(
+                "SELECT * FROM Customers",
+                transaction: Transaction
+            );
     }
 
     public Customer GetItemById(int id)
@@ -44,9 +49,9 @@ public class CustomerRepository : RepositoryBase, ICustomerRepository
         SELECT CAST(SCOPE_IDENTITY() AS int);";
 
         // Przekazanie obiektu item jako parametrów — Dapper automatycznie zmapuje właściwości na nazwy parametrów
-        item.Id = Connection.ExecuteScalar<int>(sql, item, transaction: Transaction);
+        item.CustomerId = Connection.ExecuteScalar<int>(sql, item, transaction: Transaction);
 
-        return item.Id; // Zwracamy wygenerowany identyfikator
+        return item.CustomerId; // Zwracamy wygenerowany identyfikator
     }
 
 
@@ -80,15 +85,57 @@ public class CustomerRepository : RepositoryBase, ICustomerRepository
     //    );
     //}
 
-
+    /// <summary>
+    /// Aktualizacja danych klienta w bazie danych
+    /// </summary>
+    /// <param name="item"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public void Update(Customer item)
     {
-        throw new NotImplementedException();
+        if (item == null)
+            throw new ArgumentNullException(nameof(item));
+
+        Connection.Execute(
+            @"UPDATE Customers SET 
+                Name        = @Name, 
+                ContactName = @ContactName, 
+                Address     = @Address,  
+                City        = @City, 
+                Region      = @Region,
+                PostalCode  = @PostalCode,  
+                Country     = @Country, 
+                Phone       = @Phone, 
+                Email       = @Email
+              WHERE CustomerID = @CustomerID",
+            param: new
+            {
+                CustomerID = item.CustomerId,
+                Name = item.Name,
+                ContactName = item.ContactName,
+                Address = item.Address,
+                City = item.City,
+                Region = item.Region,
+                PostalCode = item.PostalCode,
+                Country = item.Country,
+                Phone = item.Phone,
+                Email = item.Email
+            },
+            transaction: Transaction
+        );
     }
 
+
+    /// <summary>
+    /// Usuwanie pojedynczego klienta po identyfikatorze
+    /// </summary>
+    /// <param name="id"></param>
     public void Delete(int id)
     {
-        throw new NotImplementedException();
+        Connection.Execute(
+            "DELETE FROM Customers WHERE CustomerID = @CustomerID",
+            param: new { CustomerID = id },
+            transaction: Transaction
+        );
     }
 
     public void Save()

@@ -9,7 +9,7 @@ public class ItemCustomerGridDTO
     /// <summary>
     /// Identyfikator
     /// </summary>
-    public int Id { get; set; }
+    public int CustomerId { get; set; }
 
     /// <summary>
     /// Nazwa wyświetlana na liście

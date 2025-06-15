@@ -29,9 +29,6 @@ public class BootStrapper : IBootStrapper
         services.AddTransient<MainViewModel>();
         services.AddTransient<CustomersViewModel>();
 
-        // Rejestracja repozytoriów
-        services.AddSingleton<ICustomerRepository, CustomerRepository>();
-
         _serviceProvider = services.BuildServiceProvider();
     }
 

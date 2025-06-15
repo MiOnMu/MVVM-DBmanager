@@ -8,6 +8,7 @@ using MvvmDialogs;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Extensions.Logging;
 
 namespace DataBaseManagerUi.ViewModels;
 
@@ -16,6 +17,7 @@ public class CustomersViewModel : ObservableObject
     #region Fields
     private readonly ICustomerService _appService;
     private readonly IDialogService _dialogService;
+    private readonly ILogger<CustomersViewModel> _logger;
     #endregion
 
     #region Commands
@@ -142,16 +144,15 @@ public class CustomersViewModel : ObservableObject
     #region Ctors
     public CustomersViewModel(
         IDbAppService appService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        ILogger<CustomersViewModel> logger)
     {
         _appService = appService;
         _dialogService = dialogService;
 
-        // Pobieramy kolekcję z serwisu
-        var customersCollection = _appService.GetCustomersCollection();
+        _logger.LogInformation("Initialization of CustomersViewModel");
 
-        // Konwertujemy na ObservableCollection dla WPF
-        Customers = new ObservableCollection<ItemCustomerGridDTO>(customersCollection);
+        ReLoadingGridData();
 
 
         // Inicjalizacja poleceń
@@ -163,77 +164,136 @@ public class CustomersViewModel : ObservableObject
 
     #region Handlers
 
-
-    /// <summary>
-    /// Logika zapisu do bazy danych
-    /// </summary>
-    private async void OnConfirmationAddAsync()
+    /// <summary>
+    /// Logika zapisu do bazy danych
+    /// </summary>
+    private async void OnConfirmationAddAsync()
     {
+        _logger.LogInformation("Attempting to add a new customer");
 
         ItemCustomerGridDTO oNewDto = new ItemCustomerGridDTO();
-        this.Adapt(oNewDto);           // Mapowanie danych
-        if (IsValidNewDtoOf(oNewDto))  // Walidacja danych wejściowych
-        {
-            bool resulAddCustomerAction = _appService.AddCustomer(oNewDto);   // Ta gałąź zostanie wykonana, jeśli walidacja zakończy się pomyślnie
-            if (!resulAddCustomerAction)
-                _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli wystąpił błąd podczas dodawania
-                    $"$Błąd podczas próby dodania {oNewDto.Name}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        else
-        {
-            _dialogService.ShowMessageBox(this,                       // A ta gałąź - jeśli dane będą nieprawidłowe
-                "Nieprawidłowe dane wejściowe", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-    }
-
-    /// <summary>
-    /// Logika edycji
-    /// </summary>
-    private async void OnEditCustomerAsync()
-    {
-        if (SelectedCustomer != null)
-        {
-            ItemCustomerGridDTO editDto = new ItemCustomerGridDTO();
-            this.Adapt(editDto);               // Mapowanie danych
-            editDto.Id = SelectedCustomer.Id; // Koniecznie ustawiamy identyfikator !!
-
-            if (IsValidNewDtoOf(editDto))                                 // Walidacja danych wejściowych
+        this.Adapt(oNewDto);           // Mapowanie danych
+        if (IsValidNewDtoOf(oNewDto))    // Walidacja danych wejściowych
+        {
+            bool addCustomerResult = _appService.AddCustomer(oNewDto);    // Ta gałąź zadziała, jeśli walidacja przejdzie pomyślnie
+            if (!addCustomerResult)
             {
-                _appService.UpdateExistedCustomer(editDto);               // Ta gałąź zostanie wykonana, jeśli walidacja zakończy się pomyślnie
+                _logger.LogError("Error while trying to add customer {Name}", oNewDto.Name);
+                _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli wystąpił błąd podczas dodawania
+                            $"Error while trying to add {oNewDto.Name}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             else
             {
-                _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli dane będą nieprawidłowe
-                    "Nieprawidłowe dane wejściowe", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.LogInformation("Customer {Name} was successfully added", oNewDto.Name);
+                ReLoadingGridData();        // Jeśli w bazie danych dodawanie przebiegło pomyślnie -> Wymuszone odświeżenie tabeli
+
+                _dialogService.ShowMessageBox(this,
+          $"New customer {oNewDto.Name} has been successfully added", "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         else
         {
-            _dialogService.ShowMessageBox(this,                   // Wyświetli się, jeśli użytkownik niczego nie wybrał z tabeli
-                "Najpierw należy wybrać wiersz do edycji!", "Ostrzeżenie", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _logger.LogWarning("Validation failed when adding a customer");
+            _dialogService.ShowMessageBox(this,                       // A ta gałąź - jeśli dane będą nieprawidłowe
+                      "Invalid source data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Logika edycji
+    /// </summary>
+    private async void OnEditCustomerAsync()
+    {
+        if (SelectedCustomer != null)
+        {
+            _logger.LogInformation("Attempting to edit customer with Id={CustomerId}", SelectedCustomer.CustomerId);
+
+            ItemCustomerGridDTO editDto = new ItemCustomerGridDTO();
+            this.Adapt(editDto);           // Mapowanie danych
+            editDto.CustomerId = SelectedCustomer.CustomerId; // Koniecznie ustawiamy identyfikator !!
+
+            if (IsValidNewDtoOf(editDto))                                   // Walidacja danych wejściowych
+            {
+                _appService.UpdateExistedCustomer(editDto);       // Ta gałąź zadziała, jeśli walidacja przejdzie pomyślnie
+
+                _logger.LogInformation("Customer {Name} (Id={CustomerId}) has been successfully updated", editDto.Name, editDto.CustomerId);
+
+                // Ponowne odświeżenie zawartości tabeli
+                ReLoadingGridData();
+
+                _dialogService.ShowMessageBox(this,
+                  $"Existing customer {editDto.Name} has been successfully updated", "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                _logger.LogWarning("Validation failed when editing customer with Id={CustomerId}", editDto.CustomerId);
+                _dialogService.ShowMessageBox(this,       // A ta gałąź - jeśli dane będą nieprawidłowe
+                            "Invalid source data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        else
+        {
+            _logger.LogWarning("Edit customer: no row selected for editing");
+            _dialogService.ShowMessageBox(this,       // Wyświetli się, jeśli użytkownik nie wybrał niczego z tabeli
+                      "You must first select a row to edit!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    /// <summary>
+    /// Logika usuwania
+    /// </summary>
+    /// <param name="customer"></param>
+    private async void OnDeleteCustomerAsync(ItemCustomerGridDTO customer)
+    {
+        if (customer == null)
+        {
+            _logger.LogWarning("Delete customer: null was passed");
+            return;
         }
 
+        _logger.LogInformation("Attempting to delete customer {Name} (Id={CustomerId})", customer.Name, customer.CustomerId);
 
+        // Wywołanie procedury usuwania z bazy danych
+        _appService.DeleteCustomerUsing(customer.CustomerId);
+
+        _logger.LogInformation("Customer {Name} (Id={CustomerId}) was successfully deleted", customer.Name, customer.CustomerId);
+
+        // Ponowne odświeżenie zawartości tabeli
+        ReLoadingGridData();
+
+        // Na koniec komunikat dialogowy o pomyślnym usunięciu
+        _dialogService.ShowMessageBox(this,
+      $"Deleted customer {customer.Name}", "Information", MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 
-    /// <summary>
-    /// Logika usuwania
-    /// </summary>
-    /// <param name="customer"></param>
-    private async void OnDeleteCustomerAsync(ItemCustomerGridDTO customer)
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Odświeżenie zawartości tabeli
+    /// </summary>
+    private void ReLoadingGridData()
     {
-        _appService.DeleteCustomerUsing(customer.Id);
-    }
-    #endregion
+        _logger.LogInformation("Refreshing the contents of the customer table");
 
-    #region Methods
+        // Pobieramy kolekcję z serwisu
+        IEnumerable<ItemCustomerGridDTO> customersCollection = _appService.GetCustomersCollection();
+        if (!customersCollection.Any())
+        {
+            _logger.LogError("Error loading customer data: collection is empty");
+            _dialogService.ShowMessageBox(this,
+              "Error loading customer data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        // Konwertujemy na ObservableCollection dla WPF
+        Customers = new ObservableCollection<ItemCustomerGridDTO>(customersCollection);
+    }
 
     private bool IsValidNewDtoOf(ItemCustomerGridDTO oDto)
     {
-        return true; // TODO : Uzupełnić później rzeczywistą logiką walidacji danych, na razie zostaje tak
-    }
-    #endregion
-
-
+        // Można dodać logowanie przy rzeczywistej walidacji
+        return true; // TODO : Uzupełnić później rzeczywistą logiką sprawdzania danych, na razie zostaje tak
+    }
+    #endregion
 }
