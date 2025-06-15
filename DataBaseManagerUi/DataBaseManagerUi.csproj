@@ -10,10 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-    <PackageReference Include="MvvmDialogs" Version="9.1.2" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	  <PackageReference Include="Mapster" Version="7.4.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+	  <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
+	  <PackageReference Include="MvvmDialogs" Version="9.1.2" />
   </ItemGroup>
 
   <ItemGroup>
