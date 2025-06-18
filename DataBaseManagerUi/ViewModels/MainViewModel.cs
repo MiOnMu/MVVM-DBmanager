@@ -14,6 +14,7 @@ public class MainViewModel : ObservableObject
 
     #region Commands
     public IRelayCommand ShowCustomersCommand => new AsyncRelayCommand(OpenCustomersAsync);
+    public IRelayCommand ShowSuppliersCommand => new AsyncRelayCommand(OpenSuppliersAsync);
     #endregion
 
     #region Ctors
@@ -35,7 +36,6 @@ public class MainViewModel : ObservableObject
     #region Handlers
     /// <summary>
     /// Nowy handler do wyświetlania okna pomocniczego,
-    /// ale już tylko dla klientów
     /// </summary>
     /// <returns></returns>
     private async Task OpenCustomersAsync()
@@ -47,6 +47,19 @@ public class MainViewModel : ObservableObject
 
 
         _dialogService.Show(this, customerVM); // Właściwe polecenie wyświetlenia
+        // W tym miejscu do pracy wkracza biblioteka MvvmDialogs
+
+    }
+
+    private async Task OpenSuppliersAsync()
+    {
+
+        // Pobranie obiektu CustomersViewModel z kontenera wstrzykiwania zależności
+        // działamy przez dostawcę usług (service provider)
+        var supplierVM = _serviceProvider.GetRequiredService<SuppliersViewModel>();
+
+
+        _dialogService.Show(this, supplierVM); // Właściwe polecenie wyświetlenia
         // W tym miejscu do pracy wkracza biblioteka MvvmDialogs
 
     }

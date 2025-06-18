@@ -26,10 +26,12 @@ public class BootStrapper : IBootStrapper
         services.AddSingleton<IDialogService, DialogService>();
         services.AddTransient<IDbAppService, DbAppService>();
         services.AddTransient<ICustomerService, DbAppService>();
+        services.AddTransient<ISupplierService, DbAppService>();
 
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
         services.AddTransient<CustomersViewModel>();
+        services.AddTransient<SuppliersViewModel>();
 
         _serviceProvider = services.BuildServiceProvider();
     }

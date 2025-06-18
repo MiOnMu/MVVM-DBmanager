@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace DataBaseManagerUi.Views
 {
     /// <summary>
-    /// Logika interakcji dla Customers.xaml
+    /// Logika interakcji dla Suppliers.xaml
     /// </summary>
-    public partial class Customers : Window
+    public partial class Suppliers : Window
     {
-        public Customers()
+        public Suppliers()
         {
             InitializeComponent();
         }

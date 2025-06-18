@@ -8,7 +8,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private IDbConnection _connection;
     private IDbTransaction _transaction;
-    private ICustomerRepository      _customerRepository;
+    private ICustomerRepository _customerRepository;
+    private ISupplierRepository _supplierRepository;
     private IEventsHistoryRepository _eventsHistoryRepository;
     private bool _disposed;
 
@@ -30,6 +31,12 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     /// </summary>
     public ICustomerRepository CustomerRepository
         => _customerRepository ??= new CustomerRepository(_transaction);
+
+    /// <summary>
+    /// Dostęp do repozytorium dostawców
+    /// </summary>>
+    public ISupplierRepository SupplierRepository
+        => _supplierRepository ??= new SupplierRepository(_transaction);
 
 
     public void Commit()
@@ -54,6 +61,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private void resetRepositories()
     {
         _customerRepository      = null;
+        _supplierRepository      = null;
         _eventsHistoryRepository = null;
     }
 
@@ -102,6 +110,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
             _connection.Dispose();
             _transaction.Dispose();
             _customerRepository?.Dispose();
+            _supplierRepository?.Dispose();
         }
     }
 }

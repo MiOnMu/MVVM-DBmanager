@@ -179,6 +179,125 @@ public class DbAppService : IDbAppService
 
     #endregion
 
+    #region SUPPLIER SPECIFIC
+    public IEnumerable<ItemSupplierGridDTO> GetSuppliersCollection()
+    {
+        List<ItemSupplierGridDTO> retSuppliers = new List<ItemSupplierGridDTO>();
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<Supplier> created = unitOfWork.SupplierRepository.GetItemsList();
+
+
+                #region Sekcja Mapowania
+                foreach (var supplier in created)
+                {
+                    var supplierDto = supplier.Adapt<ItemSupplierGridDTO>();
+                    retSuppliers.Add(supplierDto);
+                }
+                #endregion
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Pobrano {retSuppliers.Count} dostawców");
+
+                unitOfWork.Commit();
+
+                return retSuppliers;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+
+        return retSuppliers;
+    }
+
+    /// <summary>
+    /// Główna metoda dodawania nowego dostawcy do bazy danych
+    public bool AddSupplier(ItemSupplierGridDTO inputData)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                var supplier = inputData.Adapt<Supplier>();
+                var created = unitOfWork.SupplierRepository.Create(supplier);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Dodawanie nowego dostawcy {inputData.CompanyName}");
+
+                unitOfWork.Commit();
+
+                return true;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            return false;
+        }
+        #endregion
+    }
+
+    public void UpdateExistedSupplier(ItemSupplierGridDTO inputData)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                var supplier = inputData.Adapt<Supplier>();
+                unitOfWork.SupplierRepository.Update(supplier);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Aktualizacja dostawcy {inputData.CompanyName} o identyfikatorze {inputData.SupplierId}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    public void DeleteSupplierUsing(int idValue)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                unitOfWork.SupplierRepository.Delete(idValue);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Usunięcie klienta o identyfikatorze {idValue}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    #endregion
     public void GeneralServiceAction()
     {
         throw new NotImplementedException();
