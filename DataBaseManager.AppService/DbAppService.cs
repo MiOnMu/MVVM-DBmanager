@@ -14,7 +14,7 @@ namespace DataBaseManager.AppService;
 public class DbAppService : IDbAppService
 {
     string connectionString =
-        "server=LAPTOP-V5S1677L; database=DB; Integrated Security=true; TrustServerCertificate=True;";
+        "server=COMP; database=DB; Integrated Security=true; TrustServerCertificate=True;";
 
     #region CUSTOMER SPECIFIC
 

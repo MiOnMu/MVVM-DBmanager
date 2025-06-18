@@ -20,6 +20,8 @@ public class BootStrapper : IBootStrapper
     {
         var services = new ServiceCollection();
 
+        services.AddLogging();
+
         // Rejestracja serwisów
         services.AddSingleton<IDialogService, DialogService>();
         services.AddTransient<IDbAppService, DbAppService>();

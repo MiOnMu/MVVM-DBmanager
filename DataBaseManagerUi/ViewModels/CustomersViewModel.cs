@@ -149,6 +149,7 @@ public class CustomersViewModel : ObservableObject
     {
         _appService = appService;
         _dialogService = dialogService;
+        _logger = logger;
 
         _logger.LogInformation("Initialization of CustomersViewModel");
 
@@ -175,8 +176,8 @@ public class CustomersViewModel : ObservableObject
         this.Adapt(oNewDto);           // Mapowanie danych
         if (IsValidNewDtoOf(oNewDto))    // Walidacja danych wejściowych
         {
-            bool addCustomerResult = _appService.AddCustomer(oNewDto);    // Ta gałąź zadziała, jeśli walidacja przejdzie pomyślnie
-            if (!addCustomerResult)
+            bool resulAddCustomerAction = _appService.AddCustomer(oNewDto);    // Ta gałąź zadziała, jeśli walidacja przejdzie pomyślnie
+            if (!resulAddCustomerAction)
             {
                 _logger.LogError("Error while trying to add customer {Name}", oNewDto.Name);
                 _dialogService.ShowMessageBox(this,                   // A ta gałąź - jeśli wystąpił błąd podczas dodawania
