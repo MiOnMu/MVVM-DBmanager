@@ -1,8 +1,8 @@
-﻿using DataBaseManager.AppService.Contracts;
+﻿using System.Globalization;
+using DataBaseManager.AppService.Contracts;
 using DataBaseManager.Core.Models;
 using DataBaseManager.CrossCutting.CommonDTOs;
 using DataBaseManager.DataAccess;
-using DataBaseManager.DataAccess.Contracts;
 using DataBaseManager.DataAccess.Contracts.DTOs;
 using Mapster;
 
@@ -298,8 +298,181 @@ public class DbAppService : IDbAppService
     }
 
     #endregion
-    public void GeneralServiceAction()
+
+    #region PRODUCT SPECIFIC
+
+    public bool CreateNewProductUsingMapped(ItemProductGridDTO inputData)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                // Tworzymy nowy obiekt Product z DTO
+                var product = inputData.Adapt<Product>();
+
+                // Dodatkowe działania w celu przypisania
+                // domyślnych danych do pól takich jak
+                // ProductRank i ProductSpecificData
+
+                int createdId = unitOfWork.ProductRepository.Create(product);
+                if (createdId <= 0)
+                    throw new Exception("error creation new product");
+
+                // Dodajemy wpis do historii zdarzeń
+                unitOfWork.EventsRepository.AddEventHistory($"Dodawanie nowego produkta {inputData.ProductName}");
+
+                // Zapisujemy zmiany w bazie danych
+                unitOfWork.Commit();
+                return true;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania klienta");
+            return false;
+        }
+        #endregion
+    }
+
+    public void DeleteProductUsingMapped(int idValue)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                unitOfWork.ProductRepository.Delete(idValue);
+
+                unitOfWork.EventsRepository.AddEventHistory($"Usunięcie produkta o identyfikatorze {idValue}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    public void UpdateProductUsingMapped(ItemProductGridDTO inputData)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                Product oProduct = inputData.Adapt<Product>();
+
+                // Dodatkowa możliwa logika
+                // do DOOKREŚLENIA (!) specyficznych pól, takich
+                // jak ranga produktu
+                // i specyficzne informacje o produkcie
+
+                unitOfWork.ProductRepository.Update(oProduct);
+
+                unitOfWork.EventsRepository
+                  .AddEventHistory($"Aktualizacja dostawcy {inputData.ProductName} o identyfikatorze {inputData.ProductID}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    public IEnumerable<ItemProductGridDTO> GetProductsCollectionUsing(int idValue)
+    {
+        List<ItemProductGridDTO> retProducts = new List<ItemProductGridDTO>();
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<Product> allProducts = unitOfWork.ProductRepository.GetItemsList();
+
+
+                #region Sekcja Mapowania
+                foreach (var oProduct in allProducts)
+                {
+                    var productDto = oProduct.Adapt<ItemProductGridDTO>();
+
+                    if (productDto.SupplierID == idValue)  // Logika filtrowania według ID dostawcy
+                        retProducts.Add(productDto);      // Tutaj trafiają już przefiltrowane dane 
+                }
+                #endregion
+
+                unitOfWork.EventsRepository
+          .AddEventHistory($"Pobrano {retProducts.Count} dostawców");
+
+                unitOfWork.Commit();
+
+                return retProducts;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+
+        return retProducts;
+    }
+
+    IEnumerable<ItemDTO> IProductService.GetSuppliersCollection()
+    {
+        List<ItemDTO> retSuppliers = new List<ItemDTO>();
+
+        try
+        {
+
+            // Wywołanie tranzytowe wewnątrz jednej klasy serwisowej
+            IEnumerable<ItemSupplierGridDTO> itemSupplierGridDtos = GetSuppliersCollection();
+
+            // Mapowanie otrzymanych danych
+            foreach (ItemSupplierGridDTO itemSupplierGridDto in itemSupplierGridDtos)
+            {
+                retSuppliers.Add(new ItemDTO
+                {
+                    Id = itemSupplierGridDto.SupplierId,
+                    Name = itemSupplierGridDto.CompanyName
+                });
+            }
+
+            return retSuppliers;
+
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+        return retSuppliers;
+    }
+
+    #endregion
+
+    #region GENERAL
+    public void GeneralServiceAction()
     {
         throw new NotImplementedException();
     }
+    #endregion
 }

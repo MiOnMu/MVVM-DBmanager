@@ -1,9 +1,12 @@
-﻿<Window x:Class="DataBaseManagerUi.Views.Customers"
+<Window x:Class="DataBaseManagerUi.Views.Products"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataBaseManagerUi.Views"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         md:DialogServiceViews.IsRegistered="True" 
-        Title="Customer" Height="485" Width="679">
+        Title="Products" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -34,7 +37,7 @@
             </Button.Background>
         </Button>
         <TabControl Margin="10,27,10,35" RenderTransformOrigin="0.535,0.495">
-            <TabItem Header="Customer List">
+            <TabItem Header="Produsct List">
                 <Grid>
                     <Grid.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -45,10 +48,10 @@
                         </LinearGradientBrush>
                     </Grid.Background>
                     <DataGrid
-            ItemsSource="{Binding Customers}"
+            ItemsSource="{Binding ItemsGrid}"
             AutoGenerateColumns="True"
-            SelectedItem="{Binding SelectedCustomer, Mode=TwoWay}"
-            Margin="10,43,10,10" SelectionChanged="DataGrid_SelectionChanged">
+            SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+            Margin="10,96,10,10" SelectionChanged="DataGrid_SelectionChanged">
                         <DataGrid.Resources>
                             <ContextMenu x:Key="RowContextMenu">
                                 <MenuItem Header="Delete" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}"/>
@@ -60,22 +63,29 @@
                             </Style>
                         </DataGrid.RowStyle>
                     </DataGrid>
+
+                    <!-- ComboBox z wybanym elementem ItemDTO -->
+                    <ComboBox ItemsSource="{Binding Items}" 
+                              DisplayMemberPath="Name" 
+                              SelectedItem="{Binding SelectedItem}"
+                              HorizontalAlignment="Left" Margin="222,56,0,0" 
+                              VerticalAlignment="Top" Width="292"/>
+                    <Label Content="Suppliers selection : " HorizontalAlignment="Center" Margin="0,17,0,0" VerticalAlignment="Top" Foreground="#FF84BFC1" FontSize="18">
+                        <Label.Effect>
+                            <DropShadowEffect/>
+                        </Label.Effect>
+                    </Label>
                 </Grid>
             </TabItem>
-            <TabItem Header="Work with selected customer">
+            <TabItem Header="Work with product">
                 <Grid Background="#FFE5E5E5">
                     <Border BorderBrush="Black" BorderThickness="1" Margin="10,0,10,0" Height="359" VerticalAlignment="Center">
-                        <Grid x:Name="grdAddCustomer" Margin="0,0,0,-1">
+                        <Grid x:Name="grdAddProduct" Margin="0,24,0,25">
                             <Grid.Effect>
                                 <DropShadowEffect/>
                             </Grid.Effect>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="95*"/>
-                                <ColumnDefinition Width="137*"/>
-                                <ColumnDefinition Width="94*"/>
-                                <ColumnDefinition Width="136*"/>
-                                <ColumnDefinition Width="78*"/>
-                                <ColumnDefinition Width="118*"/>
+                                <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Grid.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -84,7 +94,7 @@
                                     <GradientStop Color="#FF494949" Offset="0.613"/>
                                 </LinearGradientBrush>
                             </Grid.Background>
-                            <Button Content="&gt;&gt;&gt; Add" Command="{Binding AddCustomerCommand}" Margin="37,304,0,0" HorizontalAlignment="Left" Width="390" Grid.Column="1" BorderBrush="#FF7FDA80" Foreground="#FF8EE0A6" Height="27" VerticalAlignment="Top" Grid.ColumnSpan="5">
+                            <Button Content="&gt;&gt;&gt; Add" Command="{Binding AddProductCommand}" Margin="161,0,179,20" BorderBrush="#FF7FDA80" Foreground="#FF8EE0A6" Height="27" VerticalAlignment="Bottom">
                                 <Button.Effect>
                                     <DropShadowEffect/>
                                 </Button.Effect>
@@ -97,24 +107,46 @@
                                     </LinearGradientBrush>
                                 </Button.Background>
                             </Button>
-                            <TextBox Text="{Binding ContactName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="84" Height="20" VerticalAlignment="Top" Margin="2,80,0,0" Grid.Column="5"/>
-                            <Label Content="Contact" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Right" Width="49" VerticalAlignment="Top" Margin="0,80,18,0" Grid.Column="4"/>
-                            <Label Content="Phone" Height="22" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="35,45,0,0" HorizontalAlignment="Left" Width="57"/>
-                            <TextBox Text="{Binding Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Margin="0,49,0,0" Grid.Column="1"/>
-                            <TextBox Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" Margin="0,74,0,0" Grid.Column="1" HorizontalAlignment="Center" Width="120"/>
-                            <Label Content="E-Mail" Height="22" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="0,72,10,0" HorizontalAlignment="Right" Width="43"/>
-                            <Label Content="Address" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Right" Width="57" VerticalAlignment="Top" Margin="0,18,7,0" Grid.Column="2"/>
-                            <TextBox Text="{Binding Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Margin="10,20,0,0" Grid.Column="3"/>
-                            <Label Content="City" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Right" Width="57" VerticalAlignment="Top" Margin="0,46,7,0" Grid.Column="2"/>
-                            <TextBox Text="{Binding City, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Margin="10,48,0,0" Grid.Column="3"/>
-                            <Label Content="Region" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Right" Width="57" VerticalAlignment="Top" Margin="0,72,7,0" Grid.Column="2"/>
-                            <TextBox Text="{Binding Region, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Margin="10,74,0,0" Grid.Column="3"/>
-                            <Label Content="Postal Code" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Right" Width="57" VerticalAlignment="Top" Margin="0,18,10,0" Grid.Column="4"/>
-                            <TextBox Text="{Binding PostalCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" Margin="2,20,18,0" Grid.Column="5"/>
-                            <Label Content="Country" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Center" Width="57" VerticalAlignment="Top" Margin="0,47,0,0" Grid.Column="4"/>
-                            <TextBox Text="{Binding Country, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Height="20" VerticalAlignment="Top" Margin="2,49,17,0" Grid.Column="5"/>
-                            <Label Content="Name" Height="22" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="35,19,0,0" HorizontalAlignment="Left" Width="57"/>
-                            <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" TextWrapping="Wrap" Width="120" Height="20" VerticalAlignment="Top" Grid.Column="1" Margin="0,20,0,0"/>
+                            <TextBox Text="{Binding UnitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="130" Height="20" VerticalAlignment="Top" Margin="420,82,0,0">
+                                <TextBox.Effect>
+                                    <DropShadowEffect/>
+                                </TextBox.Effect>
+                            </TextBox>
+                            <Label Content="UnitPrice" Height="22" FontSize="11" Foreground="#FFC8E8BF" HorizontalAlignment="Left" Width="63" VerticalAlignment="Top" Margin="351,81,0,0">
+                                <Label.Effect>
+                                    <DropShadowEffect/>
+                                </Label.Effect>
+                            </Label>
+                            <Label Content="Product name" Height="22" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="100,108,0,0" HorizontalAlignment="Left" Width="88">
+                                <Label.Effect>
+                                    <DropShadowEffect/>
+                                </Label.Effect>
+                            </Label>
+                            <TextBox Text="{Binding ProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" TextWrapping="Wrap" Width="136" Height="20" VerticalAlignment="Top" Margin="193,111,0,0">
+                                <TextBox.Effect>
+                                    <DropShadowEffect/>
+                                </TextBox.Effect>
+                            </TextBox>
+                            <Label Content="Supplier" Height="23" FontSize="11" Foreground="#FFC8E8BF" VerticalAlignment="Top" Margin="122,81,0,0" HorizontalAlignment="Left" Width="56">
+                                <Label.Effect>
+                                    <DropShadowEffect/>
+                                </Label.Effect>
+                            </Label>
+                            <ComboBox ItemsSource="{Binding Items}" 
+                                DisplayMemberPath="Name" 
+                                SelectedItem="{Binding SelectedItem}"
+                                HorizontalAlignment="Left" Margin="193,82,0,0" 
+                                VerticalAlignment="Top" Width="136">
+                                <ComboBox.Effect>
+                                    <DropShadowEffect/>
+                                </ComboBox.Effect>
+                            </ComboBox>
+                            <CheckBox Content="Discontinued" HorizontalAlignment="Left" Margin="420,118,0,0" VerticalAlignment="Top" Width="91" Foreground="#FFCEE8B1"
+                                      IsChecked="{Binding Discontinued, Mode=TwoWay}">
+                                <CheckBox.Effect>
+                                    <DropShadowEffect/>
+                                </CheckBox.Effect>
+                            </CheckBox>
 
 
                         </Grid>
@@ -122,7 +154,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label Content="Customers" HorizontalAlignment="Left" Margin="532,10,0,0" VerticalAlignment="Top" FontSize="24" Height="38">
+        <Label Content="Products" HorizontalAlignment="Left" Margin="670,12,0,0" VerticalAlignment="Top" FontSize="24" Height="38">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF767760"/>

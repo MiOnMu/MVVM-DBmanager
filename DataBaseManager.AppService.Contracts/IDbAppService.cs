@@ -6,7 +6,10 @@ namespace DataBaseManager.AppService.Contracts;
 /// <summary>
 /// Już nie pusty kontrakt dla serwisu aplikacji
 /// </summary>
-public interface IDbAppService : ICustomerService, ISupplierService
+public interface IDbAppService :
+    ICustomerService,
+    ISupplierService,
+    IProductService
 {
     /// <summary>
     /// Jakaś na razie nieokreślona aktywność, ale charakterystyczna
