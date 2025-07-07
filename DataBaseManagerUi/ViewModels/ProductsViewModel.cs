@@ -1,18 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataBaseManager.AppService.Contracts;
-using DataBaseManager.CrossCutting.CommonDTOs;
 using DataBaseManager.DataAccess.Contracts.DTOs;
-using Mapster;
 using Microsoft.Extensions.Logging;
 using MvvmDialogs;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.Metrics;
-using System.Net;
-using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
+using DataBaseManager.CrossCutting.CommonDTOs;
+using System.Collections.ObjectModel;
+using System.Windows;
+using Mapster;
 
 namespace DataBaseManagerUi.ViewModels;
 

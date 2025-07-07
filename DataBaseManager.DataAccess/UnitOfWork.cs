@@ -11,6 +11,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private ICustomerRepository _customerRepository;
     private ISupplierRepository _supplierRepository;
     private IProductRepository  _productRepository;
+    private IOrderRepository _orderRepository;
+    private IOrderDetailsRepository _orderDetailsRepository;
     private IEventsHistoryRepository _eventsHistoryRepository;
     private bool _disposed;
 
@@ -42,6 +44,11 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public IProductRepository ProductRepository
         => _productRepository ??= new ProductRepository(_transaction);
 
+    public IOrderRepository OrderRepository
+        => _orderRepository ??= new OrderRepository(_transaction);
+
+    public IOrderDetailsRepository OrderDetailsRepository
+        => _orderDetailsRepository ??= new OrderDetailsRepository(_transaction);
 
     public void Commit()
     {

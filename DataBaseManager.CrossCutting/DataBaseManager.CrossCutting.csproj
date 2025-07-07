@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
-    <BaseOutputPath>C:\Temp\Proto\protoDataBaseManager\_BuildOutput</BaseOutputPath>
+	<BaseOutputPath>C:\Temp\MVVM-DBmanager\_BuildOutput</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

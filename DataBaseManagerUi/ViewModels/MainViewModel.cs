@@ -16,6 +16,7 @@ public class MainViewModel : ObservableObject
     public IRelayCommand ShowCustomersCommand => new AsyncRelayCommand(OpenCustomersAsync);
     public IRelayCommand ShowSuppliersCommand => new AsyncRelayCommand(OpenSuppliersAsync);
     public IRelayCommand ShowProductsCommand  => new AsyncRelayCommand(OpenProductsAsync);
+    public IRelayCommand ShowOrdersCommand => new AsyncRelayCommand(OpenOrdersAsync);
     #endregion
 
     #region Ctors
@@ -73,6 +74,17 @@ public class MainViewModel : ObservableObject
 
         _dialogService.Show(this, productsVM); 
        
+
+    }
+
+    private async Task OpenOrdersAsync()
+    {
+
+        var ordersVM = _serviceProvider.GetRequiredService<OrdersViewModel>();
+
+
+        _dialogService.Show(this, ordersVM);
+
 
     }
     #endregion

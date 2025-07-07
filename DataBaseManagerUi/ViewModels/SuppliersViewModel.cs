@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataBaseManager.AppService.Contracts;
-using DataBaseManager.CrossCutting.CommonDTOs;
 using DataBaseManager.DataAccess.Contracts.DTOs;
 using Mapster;
 using MvvmDialogs;

@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using DataBaseManager.AppService.Contracts;
+using DataBaseManager.Core.Aggregates;
 using DataBaseManager.Core.Models;
 using DataBaseManager.CrossCutting.CommonDTOs;
 using DataBaseManager.DataAccess;
@@ -15,6 +16,15 @@ public class DbAppService : IDbAppService
 {
     string connectionString =
         "server=COMP; database=DB; Integrated Security=true; TrustServerCertificate=True;";
+
+    #region Ctors
+    public DbAppService()
+    { DocumentModel = new DocumentOrderAggregate(); }
+    #endregion
+
+    #region CACHED DOCUMENT OBJECT 
+    public DocumentOrderAggregate DocumentModel { get; private set; }
+    #endregion
 
     #region CUSTOMER SPECIFIC
 
@@ -389,6 +399,49 @@ public class DbAppService : IDbAppService
         #endregion
     }
 
+    public IEnumerable<ItemDTO> GetProductsCollection()
+    {
+        List<ItemDTO> retProducts = new List<ItemDTO>();
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<Product> allProducts = unitOfWork.ProductRepository.GetItemsList();
+                #region Sekcja Mapowania
+                foreach (var currentProduct in allProducts)
+                {
+                    retProducts.Add(new ItemDTO // Tutaj wymuszone ręczne mapowanie
+                                                // z powodu niezgodności nazw
+                    {
+                        Id = currentProduct.ProductID,
+                        Name = currentProduct.ProductName
+                    });
+
+                }
+                #endregion
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Pobrano {retProducts.Count} dostawców");
+
+                unitOfWork.Commit();
+
+                return retProducts;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+
+        return retProducts;
+    }
     public IEnumerable<ItemProductGridDTO> GetProductsCollectionUsing(int idValue)
     {
         List<ItemProductGridDTO> retProducts = new List<ItemProductGridDTO>();
@@ -468,6 +521,299 @@ public class DbAppService : IDbAppService
     }
 
     #endregion
+
+    #region ORDER SPECIFIC
+    public IEnumerable<ItemOrderGridDTO> GetOrdersCollectionUsing(int idValue)
+    {
+        List<ItemOrderGridDTO> retProducts = new List<ItemOrderGridDTO>();
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<Order> allOrders = unitOfWork.OrderRepository.GetItemsList();
+
+
+                #region Sekcja Mapowania
+                foreach (var currentOrder in allOrders)
+                {
+                    ItemOrderGridDTO orderDto = currentOrder.Adapt<ItemOrderGridDTO>();
+
+                    if (orderDto.CustomerId == idValue)        // Logika filtrowania według ID klienta
+                        retProducts.Add(orderDto);             // Tutaj trafiają już przefiltrowane dane
+                }
+                #endregion
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Pobrano {retProducts.Count} dostawców");
+
+                unitOfWork.Commit();
+
+                return retProducts;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+
+        return retProducts;
+    }
+
+    public IEnumerable<ItemOrderDetailsGridDTO> GetOrdersTabCollectionUsing(int idValue)
+    {
+        List<ItemOrderDetailsGridDTO> retOrderTabCollection = new List<ItemOrderDetailsGridDTO>();
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<OrderDetails> allOrdersTabs = unitOfWork.OrderDetailsRepository
+                    .GetItemsList();
+
+
+                #region Sekcja Mapowania
+                foreach (var currentTab in allOrdersTabs)
+                {
+                    var orderTabDto = currentTab.Adapt<ItemOrderDetailsGridDTO>();
+
+                    if (currentTab.OrderId == idValue)             // Logika filtrowania według ID zamówienia
+                        retOrderTabCollection.Add(orderTabDto);    // Tutaj trafiają już przefiltrowane dane
+                }
+                #endregion
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Pobrano {retOrderTabCollection.Count} dostawców");
+
+                unitOfWork.Commit();
+
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+
+        return retOrderTabCollection;
+    }
+
+    public void DeleteOrderUsingMapped(int idValue)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                unitOfWork.OrderRepository.Delete(idValue);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Usunięcie produkta o identyfikatorze {idValue}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    public void DeleteOrderTabItemUsing(int idValue)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                unitOfWork.OrderDetailsRepository.Delete(idValue);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Usunięcie produkta o identyfikatorze {idValue}");
+
+                unitOfWork.Commit();
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+    }
+
+    /// <summary>
+    /// Główna metoda wpływająca na PONOWNE OKREŚLENIE
+    /// buforowanego obiektu-agregatu
+    /// zgodnie z wybraną opcją zamówienia
+    /// </summary>
+    /// <param name="idValue">Identyfikator w tabeli Orders</param>
+    /// <returns></returns>
+    public bool DocumentRedefinitionUsing(int idValue)
+    {
+        bool retResult = false;
+
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                IEnumerable<Order> allOrders = unitOfWork.OrderRepository
+                    .GetItemsList();
+
+                bool isOrderFound = false;
+
+                #region Sekcja mapowania danych na nagłówek dokumentu
+                foreach (var oCurrentOrder in allOrders)
+                {
+                    if (oCurrentOrder.OrderId == idValue)
+                    {
+                        this.DocumentModel.HeaderDocument = oCurrentOrder;
+                        isOrderFound = true;
+                        break;
+                    }
+                }
+                #endregion
+
+                #region Sekcja mapowania danych na obszar tabelaryczny dokumentu
+                if (isOrderFound)
+                {
+                    IEnumerable<OrderDetails> orderDetails = unitOfWork.OrderDetailsRepository
+                        .GetItemsList();
+
+                    this.DocumentModel.OrderDetails.Clear();   // Obowiązkowe wstępne czyszczenie
+
+                    foreach (OrderDetails oCurrentTab in orderDetails)
+                    {
+                        if (oCurrentTab.OrderId == this.DocumentModel
+                                .HeaderDocument.OrderId)
+                            this.DocumentModel.OrderDetails.Add(oCurrentTab);
+                    }
+                }
+                else
+                    throw new Exception($"No data for {idValue}");
+                #endregion
+
+
+                // Ponowne określenie następuje dokładnie tutaj. Ponowne przeliczenie specyficznych, modelowych parametrów, dotyczących tylko zamówienia: SummaryValue, OrderSpecificData,..., (itp)
+
+
+
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Aktywowano zamówienie # {this.DocumentModel.HeaderDocument.OrderNumber}");
+
+                unitOfWork.Commit();
+                retResult = true;
+
+                return retResult;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+
+
+        return retResult;
+    }
+
+    /// <summary>
+    /// Główna metoda zapewniająca zapis kolejnego
+    /// elementu, należącego do tabelarycznej części obiektu-dokumentu zamówienia
+    /// </summary>
+    /// <param name="itemTab"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public void SetTabItemUsing(ItemOrderDetailsGridDTO itemTab)
+    {
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+                OrderDetails orderTabDetails = itemTab.Adapt<OrderDetails>();
+
+                // Dodatkowa możliwa logika
+                // dla Dookreślenia (!) specyficznych pól. Jeśli potrzebne
+
+
+                unitOfWork.OrderDetailsRepository.Create(orderTabDetails);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Stworzono nowy element części tabelarycznej {orderTabDetails.ProductName} o identyfikatorze {orderTabDetails.ProductID}");
+
+                unitOfWork.Commit();
+
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+            // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+        }
+        #endregion
+    }
+
+    IEnumerable<ItemDTO> IOrderService.GetCustomersCollection()
+    {
+        {
+            List<ItemDTO> retCustomers = new List<ItemDTO>();
+
+            try
+            {
+
+                // Przejściowe wywołanie w ramach jednej klasy serwisowej
+                // pobieramy kolekcję obiektów klientów
+                IEnumerable<ItemCustomerGridDTO> customersCollection = GetCustomersCollection();
+
+                // Mapowanie otrzymanych danych
+                foreach (ItemCustomerGridDTO oCustomerGridDto in customersCollection)
+                {
+                    retCustomers.Add(new ItemDTO
+                    {
+                        Id = oCustomerGridDto.CustomerId,
+                        Name = oCustomerGridDto.Name
+                    });
+                }
+
+                return retCustomers;
+
+            }
+
+            #region Blok Catch
+
+            catch (Exception ex)
+            {
+                // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+                // Na przykład: Logger.LogError(ex, "Błąd podczas dodawania dostawcy");
+            }
+
+            #endregion
+
+
+
+            return retCustomers;
+        }
+
+    }
+    #endregion
 
     #region GENERAL
     public void GeneralServiceAction()

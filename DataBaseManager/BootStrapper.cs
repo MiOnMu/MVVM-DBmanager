@@ -23,17 +23,21 @@ public class BootStrapper : IBootStrapper
         services.AddLogging();
 
         // Rejestracja serwisów
-        services.AddSingleton<IDialogService, DialogService>();
-        services.AddTransient<IDbAppService, DbAppService>();
-        services.AddTransient<ICustomerService, DbAppService>();
-        services.AddTransient<ISupplierService, DbAppService>();
-        services.AddTransient<IProductService, DbAppService>();
+        services.AddSingleton<IDialogService,   DialogService>();
+
+        services.AddSingleton<IDbAppService,    DbAppService>();
+
+        services.AddSingleton<ICustomerService, DbAppService>();
+        services.AddSingleton<ISupplierService, DbAppService>();
+        services.AddSingleton<IProductService,  DbAppService>();
+        services.AddSingleton<IOrderService,    DbAppService>();
 
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
         services.AddTransient<CustomersViewModel>();
         services.AddTransient<SuppliersViewModel>();
         services.AddTransient<ProductsViewModel>();
+        services.AddTransient<OrdersViewModel>();
 
         _serviceProvider = services.BuildServiceProvider();
     }
