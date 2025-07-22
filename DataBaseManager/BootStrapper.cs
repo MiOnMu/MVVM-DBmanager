@@ -1,7 +1,5 @@
 ﻿using DataBaseManager.AppService;
 using DataBaseManager.AppService.Contracts;
-using DataBaseManager.DataAccess;
-using DataBaseManager.DataAccess.Contracts;
 using DataBaseManagerUi.ViewModels;
 using DataBaseManagerUi.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,24 +11,26 @@ public class BootStrapper : IBootStrapper
 {
     private readonly IServiceProvider _serviceProvider;
 
-    /// <summary>
-    /// Specjalna klasa, której celem jest zapewnienie powiązania zależności wewnątrz siebie
-    /// </summary>
     public BootStrapper()
     {
         var services = new ServiceCollection();
 
+        services.AddTransient<MainViewModel>();
+        services.AddTransient<LogonViewModel>();
         services.AddLogging();
 
         // Rejestracja serwisów
-        services.AddSingleton<IDialogService,   DialogService>();
+        services.AddSingleton<IDialogService, DialogService>();
 
-        services.AddSingleton<IDbAppService,    DbAppService>();
+        services.AddSingleton<IDialogService, DialogService>();
+
+        services.AddSingleton<IDbAppService, DbAppService>();
 
         services.AddSingleton<ICustomerService, DbAppService>();
         services.AddSingleton<ISupplierService, DbAppService>();
-        services.AddSingleton<IProductService,  DbAppService>();
-        services.AddSingleton<IOrderService,    DbAppService>();
+        services.AddSingleton<IProductService, DbAppService>();
+        services.AddSingleton<IOrderService, DbAppService>();
+        services.AddSingleton<ILogonService, DbAppService>();
 
         // Rejestracja ViewModeli
         services.AddTransient<MainViewModel>();
@@ -44,7 +44,7 @@ public class BootStrapper : IBootStrapper
 
     public void Run()
     {
-        var mainWindow = new MainView  // Tworzymy główne okno i ustawiamy DataContext
+        var mainWindow = new MainView
         { DataContext = _serviceProvider.GetRequiredService<MainViewModel>() };
         mainWindow.Show();
     }

@@ -1,41 +1,89 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using MvvmDialogs;
+using Microsoft.Extensions.Logging;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using MvvmDialogs;
+using DataBaseManagerUi.Bases;
 
 namespace DataBaseManagerUi.ViewModels;
 
-public class MainViewModel : ObservableObject
+public class MainViewModel : BaseViewModel
 {
     #region Fields
-    private readonly IDialogService _dialogService;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IDialogService _dialogService;
+    private readonly ILogger<MainViewModel> _logger;
+    #endregion
+
+    #region Properties
+
+
+    #region Main View Enabling
+    private bool _enableMainView;
+    public bool EnableMainView
+    {
+        get => _enableMainView;
+
+        set
+        {
+            _enableMainView = value;
+            OnPropertyChanged(nameof(EnableMainView));
+        }
+    }
+    #endregion
+
     #endregion
 
     #region Commands
     public IRelayCommand ShowCustomersCommand => new AsyncRelayCommand(OpenCustomersAsync);
     public IRelayCommand ShowSuppliersCommand => new AsyncRelayCommand(OpenSuppliersAsync);
-    public IRelayCommand ShowProductsCommand  => new AsyncRelayCommand(OpenProductsAsync);
+    public IRelayCommand ShowProductsCommand => new AsyncRelayCommand(OpenProductsAsync);
     public IRelayCommand ShowOrdersCommand => new AsyncRelayCommand(OpenOrdersAsync);
     #endregion
 
     #region Ctors
-
-    /// <summary>
-    /// Konstruktor z parametrami
-    /// </summary>
-    /// <param name="dialogService"></param>
-    /// <param name="serviceProvider"></param>
     public MainViewModel(
-        IDialogService dialogService,       // Wstrzykiwanie zależności IDialogService przez konstruktor
-        IServiceProvider serviceProvider)   // Wstrzykiwanie zależności IServiceProvider przez konstruktor
+        IDialogService dialogService,
+        IServiceProvider serviceProvider,
+        ILogger<MainViewModel> logger)
     {
         _dialogService = dialogService;
         _serviceProvider = serviceProvider;
+        _logger = logger;
+
+        _logger.LogInformation("Initialization of MainViewModel");
+
+        OnLoadCommand = new RelayCommand(OnPrimaryLoadingAsync);
     }
     #endregion
 
+
+
+
     #region Handlers
+
+    private async void OnPrimaryLoadingAsync()
+    {
+
+        // Aktywujemy stan
+        AppState = "VisualStateStart";
+
+        EnableMainView = true;
+        var logonVM = _serviceProvider.GetRequiredService<LogonViewModel>();
+        bool? dialogResult = _dialogService.ShowDialog(this, logonVM);
+
+        if (dialogResult == true)
+        {
+            // Aktywujemy stan
+            AppState = "VisualStateEnd";
+        }
+        else
+        {
+            _logger.LogInformation("Termination the application...");
+            // Wyjście z aplikacji w przypadku niepowodzenia logowania
+            System.Windows.Application.Current.Shutdown();
+        }
+
+    }
     /// <summary>
     /// Nowy handler do wyświetlania okna pomocniczego,
     /// </summary>
@@ -72,8 +120,8 @@ public class MainViewModel : ObservableObject
         var productsVM = _serviceProvider.GetRequiredService<ProductsViewModel>();
 
 
-        _dialogService.Show(this, productsVM); 
-       
+        _dialogService.Show(this, productsVM);
+
 
     }
 

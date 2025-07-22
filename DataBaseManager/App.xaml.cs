@@ -8,13 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataBaseManager
 {
-
+    /// <summary>
+    /// Ta metoda zostanie wykonana jako pierwsza w aplikacji
+    /// </summary>
     public partial class App : Application
     {
-        /// <summary>
-        /// Ta metoda zostanie wykonana jako pierwsza w aplikacji
-        /// </summary>
-        /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

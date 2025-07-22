@@ -7,7 +7,8 @@ public interface IDbAppService :
     ICustomerService,
     ISupplierService,
     IProductService,
-    IOrderService
+    IOrderService,
+    ILogonService
 {
     /// <summary>
     /// Jakaś na razie nieokreślona aktywność, ale charakterystyczna

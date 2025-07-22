@@ -22,6 +22,73 @@ public class DbAppService : IDbAppService
     { DocumentModel = new DocumentOrderAggregate(); }
     #endregion
 
+    #region LOGON SPECIFIC
+    public bool IsUserValid(string passEncryptedData, string userName,
+        out bool isUserAdmin)
+    {
+        bool retResult = false;  
+        isUserAdmin = false;
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+
+                SysUser sysUser = unitOfWork.LogonInfoRepository
+                    .GetUserInfoByPassword(passEncryptedData, userName, out isUserAdmin);
+
+                if (sysUser.IsCorrectRetrieved)
+                {
+                    unitOfWork.EventsRepository
+                        .AddEventHistory($"Attempt to retrieve object SysUser with name {sysUser.UserName} and  ID: {sysUser.UserID}");
+
+                    unitOfWork.Commit();
+                    retResult = true;
+                }
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+
+        }
+        #endregion
+
+        return retResult;
+    }
+
+    public bool AddNewUser(string passData, string userName)
+    {
+        bool retResult = false;
+        try
+        {
+            using (var unitOfWork = new UnitOfWork(connectionString))
+            {
+
+                unitOfWork.LogonInfoRepository.CreateNewUser(passData, userName);
+
+                unitOfWork.EventsRepository
+                    .AddEventHistory($"Attempt to add object SysUser with user name {userName}");
+
+                unitOfWork.Commit();
+
+                retResult = true;
+            }
+        }
+
+        #region Blok Catch
+        catch (Exception ex)
+        {
+            // W tym miejscu można dodać logowanie błędu, jeśli jest to wymagane
+        }
+        #endregion
+
+        return retResult;
+    }
+
+    #endregion
+
     #region CACHED DOCUMENT OBJECT 
     public DocumentOrderAggregate DocumentModel { get; private set; }
     #endregion

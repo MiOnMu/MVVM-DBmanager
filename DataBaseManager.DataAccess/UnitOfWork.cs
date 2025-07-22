@@ -1,6 +1,7 @@
 ﻿using DataBaseManager.DataAccess.Contracts;
 using System.Data;
 using System.Data.SqlClient;
+using DataBaseManager.Core.Models;
 
 namespace DataBaseManager.DataAccess;
 
@@ -12,6 +13,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private ISupplierRepository _supplierRepository;
     private IProductRepository  _productRepository;
     private IOrderRepository _orderRepository;
+    private ILogonInfoRepository<SysUser> _logonInfoRepository;
     private IOrderDetailsRepository _orderDetailsRepository;
     private IEventsHistoryRepository _eventsHistoryRepository;
     private bool _disposed;
@@ -49,6 +51,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     public IOrderDetailsRepository OrderDetailsRepository
         => _orderDetailsRepository ??= new OrderDetailsRepository(_transaction);
+
+    public ILogonInfoRepository<SysUser> LogonInfoRepository
+        => _logonInfoRepository ??= new LogonInfoRepository(_transaction);
 
     public void Commit()
     {
